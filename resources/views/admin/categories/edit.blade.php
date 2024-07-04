@@ -60,8 +60,8 @@
                                     src="{{ asset('img/no-img.png') }}" alt="{{ $category->name }}" width="60" height="60">
                             @endif
                             <br>
-                            <div class="file-loading">
-                                <input type="file" name="cover" id="category-img" class="file-input-overview">
+                            <div class="image">
+                                <input type="file" name="cover" id="category-image" class="file-input-overview">
                                 <span class="form-text text-muted">Image width should be 500px x 500px</span>
                             </div>
                             @error('cover')<span class="text-danger">{{ $message }}</span>@enderror
@@ -79,7 +79,7 @@
 @push('script-alt')
     <script>
         $(function () {
-            $("#category-img").fileinput({
+            $("#category-image").fileinput({
                 theme: "fas",
                 maxFileCount: 1,
                 allowedFileTypes: ['image'],

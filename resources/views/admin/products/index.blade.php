@@ -28,7 +28,6 @@
                         <th>Quantity</th>
                         <th>Price</th>
                         <th>Weight</th>
-                        <th>Tags</th>
                         <th>Category</th>
                         <th>Status</th>
                         <th class="text-center" style="width: 30px;">Action</th>

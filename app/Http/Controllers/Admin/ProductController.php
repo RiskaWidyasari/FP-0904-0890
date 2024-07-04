@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use App\Http\Requests\Admin\ProductRequest;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Str;
+
 
 class ProductController extends Controller
 {
@@ -54,17 +56,37 @@ class ProductController extends Controller
         abort_if(Gate::denies('product_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
        
         if ($request->validated()){
-            $product = Product::create($request->except('tags', 'images', '_token'));
-            $product->tags()->attach($request->tags);
+            $product = Product::create([
+                'name' => $request->name,
+                'slug' => Str::slug($request->name), // Generate slug if not provided
+                'price' => $request->price, // Include price in creation
+                'description' => $request->description,
+                'details' => $request->details,
+                'quantity' => $request->quantity, // Example for quantity
+                'weight' => $request->weight, // Example for weight
+                'category_id' => $request->category_id, // Example for category_id
+                'status' => $request->status, // Example for status
+        ]);
 
-            if ($request->images && count($request->images) > 0) {
-                (new ImageService())->storeProductImages($request->images, $product);
+            //if ($request->images && count($request->images) > 0) {
+            //    (new ImageService())->storeProductImages($request->images, $product);
+            //}
+            if ($request->hasFile('cover')) {
+                $image = $request->file('cover');
+                $filename = time() . '.' . $image->getClientOriginalExtension();
+                $path = $image->storeAs('public/images/products', $filename);
+                $product->cover = $filename; // Simpan nama file gambar ke dalam atribut 'cover'
+                $product->save(); // Simpan perubahan ke database
             }
+    
+            $product->tags()->attach($request->tags);
 
             return redirect()->route('admin.products.index')->with([
                 'message' => 'success created !',
                 'alert-type' => 'success'
             ]);
+
+            
         }
 
         return back()->with([

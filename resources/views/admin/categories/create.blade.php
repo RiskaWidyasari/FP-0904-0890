@@ -27,35 +27,39 @@
                                 @error('name')<span class="text-danger">{{ $message }}</span>@enderror
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="col-6">
                             <div class="form-group">
-                                <label for="category_id">Parent</label>
-                                <select name="category_id" id="category_id" class="form-control">
-                                    <option value="">---</option>
-                                    @forelse($parent_categories as $parent_category)
-                                        <option value="{{ $parent_category->id }}" {{ old('category_id') == $parent_category->id ? 'selected' : null }}>
-                                            {{ $parent_category->name }}
-                                        </option>
-                                    @empty
-                                        <option value="" disabled>No categories found</option>
-                                    @endforelse
-                                </select>
-                                @error('parent_id')<span class="text-danger">{{ $message }}</span>@enderror
+                                <label for="deskripsi">Deskripsi</label>
+                                <input class="form-control" id="deskripsi" type="text" name="deskripsi" value="{{ old('deskripsi') }}">
+                                @error('deskripsi')<span class="text-danger">{{ $message }}</span>@enderror
                             </div>
                         </div>
                     </div>
 
                     <div class="row pt-4">
                         <div class="col-12">
-                            <label for="cover">Cover image</label>
+                            <label for="category-image">Cover image</label>
                             <br>
-                            <div class="file-loading">
-                                <input type="file" name="cover" id="category-img" class="file-input-overview">
+                            <div class="image">
+                                <input type="file" name="cover" id="category-image" class="file-input-overview">
                                 <span class="form-text text-muted">Image width should be 500px x 500px</span>
                             </div>
-                            @error('cover')<span class="text-danger">{{ $message }}</span>@enderror
+                            @error('cover')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
+
+                    <!-- <div class="row">
+                        <div class="col-12">
+                            <label for="images">{{ __('images') }}</label>
+                            <br>
+                            <div class="file-loading">
+                                <input type="file" name="images[]" id="category-images" class="file-input-overview" multiple="multiple">
+                            </div>
+                            @error('images')<span class="text-danger">{{ $message }}</span>@enderror
+                        </div>
+                    </div> -->
 
                     <div class="form-group pt-4">
                         <button class="btn btn-primary" type="submit" name="submit">{{ __('Save') }}</button>
@@ -65,7 +69,7 @@
         </div>
     </div>
 @endsection
-@push('script-alt')
+@push('scripts')
     <script>
         $(function () {
             $("#category-img").fileinput({

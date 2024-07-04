@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Traits\ImageUploadTrait;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Admin\CategoryRequest;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -51,22 +53,46 @@ class CategoryController extends Controller
     {
         abort_if(Gate::denies('category_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        // Validasi input sudah dilakukan di CategoryRequest
+        $validated = $request->validated();
+
+    // $request->validate([
+    //     'name' => 'required|string|max:255',
+    //     'cover' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //     'Deskripsi' => 'required|string',
+    // ]);
+
+        // Menyimpan File
         $image = NULL;
         if ($request->hasFile('cover')) {
-            $image = $this->uploadImage($request->name, $request->cover, 'categories', 268, 268);
+            //$image = $this->uploadImage($request->name, $request->cover, 'categories', 268, 268);
+            $image = $request->file('cover');
+        $filename = time() . '.' . $image->getClientOriginalExtension();
+        $path = $image->storeAs('public/images/categories', $filename);
+
+        // Simpan informasi file ke database
+        // Misalnya, jika Anda memiliki model Category
+        // $category = new Category();
+        // $category->name = $request->name; // Pastikan nama kategori diisi
+        // $category->cover = $filename;
+        // $category->Deskripsi = $request->Deskripsi; // Pastikan Deskripsi diisi sesuai dengan kebutuhan aplikasi Anda
+        // $category->save();
         }
 
         Category::create([
             'name' => $request->name,
             'category_id' => $request->category_id,
-            'cover' => $image,
+            'cover' => $filename,
+            'Deskripsi'=> $request->Deskripsi,
         ]);
 
         return redirect()->route('admin.categories.index')->with([
             'message' => 'success created !',
             'alert-type' => 'success'
         ]);
+        //return redirect()->back()->withErrors(['cover' => 'Failed to upload cover image.'])->withInput();
     }
+    
 
     /**
      * Display the specified resource.
@@ -107,25 +133,44 @@ class CategoryController extends Controller
     {
         abort_if(Gate::denies('category_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $image = $category->cover;
-        if ($request->has('cover')) {
-            if ($category->cover != null && File::exists('storage/images/categories/'. $category->cover)) {
-                unlink('storage/images/categories/'. $category->cover);
-            }
-            $image = $this->uploadImage($request->name, $request->cover, 'categories', 268, 268);
+        // Validasi input sudah dilakukan di CategoryRequest
+        $validated = $request->validated();
+
+        // // Validasi input
+        // $request->validate([
+        //     'name' => 'required|string|max:255',
+        //     'Deskripsi' => 'required|string',
+        //     'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        // ]);
+
+       // Handle file upload if provided
+       //$image = null;
+       if ($request->hasFile('cover')) {
+        $image = $request->file('cover');
+        $filename = time() . '.' . $image->getClientOriginalExtension();
+        $path = $image->storeAs('public/images/categories', $filename);
+
+        // Delete old image if exists
+        if ($category->cover && File::exists('storage/images/categories/' . $category->cover)) {
+            File::delete('storage/images/categories/' . $category->cover);
         }
 
-        $category->update([
-            'name' => $request->name,
-            'category_id' => $request->category_id,
-            'cover' => $image,
-        ]);
-
-        return redirect()->route('admin.categories.index')->with([
-            'message' => 'success updated !',
-            'alert-type' => 'info'
-        ]);    
+        $category->cover = $filename;
     }
+
+         // Update category information
+         $category->name = $request->name;
+         $category->Deskripsi = $request->Deskripsi;
+ 
+         // Save changes
+         $category->save();
+ 
+         return redirect()->route('admin.categories.index')->with([
+             'message' => 'Category updated successfully!',
+             'alert-type' => 'info'
+         ]);
+     }
+ 
 
     /**
      * Remove the specified resource from storage.
@@ -140,14 +185,14 @@ class CategoryController extends Controller
         if($category->category_id == null) {
             foreach($category->children as $child) {
                 if (File::exists('storage/images/categories/'. $child->cover)) {
-                    unlink('storage/images/categories/'. $child->cover);
+                    File::delete('storage/images/categories/'. $child->cover);
                 }
             }
         }
 
         if ($category->cover) {
             if (File::exists('storage/images/categories/'. $category->cover)) {
-                unlink('storage/images/categories/'. $category->cover);
+                File::delete('storage/images/categories/'. $category->cover);
             }
         }
 

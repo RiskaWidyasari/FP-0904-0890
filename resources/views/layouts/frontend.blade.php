@@ -40,7 +40,7 @@
                         <div class="header-bottom-wrapper">
                             <div class="logo-2 furniture-logo ptb-30">
                                 <a href="/">
-                                    <img height="60" style="transform:scale(1.5);object-fit: cover;" src="{{ asset('frontend/assets/img/logo/logo.png') }}" alt="">
+                                    <img height="60" style="transform:scale(1.5);object-fit: cover;" src="{{ asset('frontend\assets/img/logo/savana logo.png') }}" alt="">
                                 </a>
                             </div>
                             <div class="menu-style-2 furniture-menu menu-hover">

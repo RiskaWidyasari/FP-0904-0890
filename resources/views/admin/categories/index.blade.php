@@ -25,9 +25,8 @@
                         <th>ID</th>
                         <th>Image</th>
                         <th>Name</th>
-                        <th>Product count</th>
-                        <th>Parent</th>
-                        <th class="text-center" style="width: 30px;">Action</th>
+                        <th>Deskripsi</th>
+                        <th class="text-center" style="width: 120px;">Action</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -37,7 +36,8 @@
                             <td>
                                 @if($category->cover)
                                     <img src="{{ Storage::url('images/categories/' . $category->cover) }}"
-                                        width="60" height="60" alt="{{ $category->name }}">
+                                        width="60" height="60" alt="{{ $category->name }}"> 
+                                    
                                 @else
                                     <span class="badge badge-primary">No image</span>
                                 @endif
@@ -46,15 +46,13 @@
                                     {{ $category->name }}
                                 </a>
                             </td>
-                            <td>{{ $category->products_count }}</td>
-                            <td>{{ $category->parent->name ?? '' }}</td>
+                            <td>{{ $category->deskripsi }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-sm btn-primary">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <form onclick="return confirm('are you sure !')" action="{{ route('admin.categories.destroy', $category) }}"
-                                    method="POST">
+                                    <form onclick="return confirm('are you sure !')" action="{{ route('admin.categories.destroy', $category) }}"method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-trash"></i></button>
@@ -64,13 +62,13 @@
                         </tr>
                     @empty
                         <tr>
-                            <td class="text-center" colspan="6">No categories found.</td>
+                            <td class="text-center" colspan="7">No categories found.</td>
                         </tr>
                     @endforelse
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="6">
+                            <td colspan="7">
                                 <div class="float-right">
                                     {!! $categories->appends(request()->all())->links() !!}
                                 </div>

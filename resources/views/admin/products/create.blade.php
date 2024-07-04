@@ -58,18 +58,7 @@
                                 @error('category_id')<span class="text-danger">{{ $message }}</span>@enderror
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label for="tags">Tags</label>
-                                <select name="tags[]" id="tags" class="form-control select2" multiple="multiple" required>
-                                    @forelse($tags as $tag)
-                                        <option value="{{ $tag->id }}">{{ $tag->name }}</option>
-                                    @empty
-                                    @endforelse
-                                </select>
-                                @error('tags')<span class="text-danger">{{ $message }}</span>@enderror
-                            </div>
-                        </div>
+                        
                     </div>
                    <div class="row">
                         <div class="col-6">
